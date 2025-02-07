@@ -40,12 +40,6 @@ export function tokenize(text: string): string[] {
   return cleanText.split(/\s+/).filter(Boolean);
 }
 
-type FileName = string;
-interface IndexRow {
-  files: string;
-  id: number;
-}
-
 export const DB_PATH = "src/searchIndex.db";
 
 export class TextSearchEngine {
@@ -76,12 +70,12 @@ export class TextSearchEngine {
     `);
   }
 
-  tokenizeFile(fileName: FileName): string[] {
+  tokenizeFile(fileName: string): string[] {
     const content = fs.readFileSync(fileName, "utf-8");
     return tokenize(content);
   }
 
-  indexFile(fileName: FileName) {
+  indexFile(fileName: string) {
     const tokens = this.tokenizeFile(fileName);
 
     // if token already exists, ignore it.
