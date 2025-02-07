@@ -33,6 +33,13 @@ describe("Inverted Index", () => {
       fs.unlinkSync(DB_PATH);
     }
   });
+
+  afterEach(() => {
+    if (fs.existsSync(DB_PATH)) {
+      fs.unlinkSync(DB_PATH);
+    }
+  });
+
   it("should index and search a file", () => {
     const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
     const invertedIndex = new TextSearchEngine();
