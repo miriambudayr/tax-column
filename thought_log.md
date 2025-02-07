@@ -65,3 +65,23 @@ Which should I do first?
 I want to refactor before optimizing because optimizing will add code complexity, so it is better to add complexity to cleaner code.
 
 I would rather have code that is reasonable to read and works than confusing code that is missing one feature, so I will do a really fast refactor and then think about how to add the instant search method.
+
+# Benchmarking
+
+Now that I have some basic prefix searching, I want to think about optimizations.
+
+This is slow!
+
+I ran the `text-search-engine.test.ts` file on the sample data provided by Column Tax, which is 20 MB, and it took 50 wall-clock seconds to finish processing and indexing the text.
+
+My intuition tells me the bottleneck is not in the tokenizing or file reading, but in sqlite transactions.
+
+I ran this profiler command on a test for about 9 seconds:
+
+`node --inspect-brk node_modules/.bin/jest src/text-search-engine.test.ts`
+
+![](images/20250207135021.png)
+
+You can see that `sqliteTransaction` is >85% of total time.
+
+The main bottleneck for building the index is sqlite.
