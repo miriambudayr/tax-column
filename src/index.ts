@@ -58,6 +58,14 @@ export class InvertedIndex {
     }
   }
 
+  recursivelyIndexDirectory(dirName: string) {
+    const files = listFilesSync(dirName);
+
+    for (const file of files) {
+      this.indexFile(file);
+    }
+  }
+
   // TODO: this will search for exact, single tokens.
   // Need to be able to search for multiple tokens together.
   search(token: string) {

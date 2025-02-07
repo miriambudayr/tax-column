@@ -1,5 +1,6 @@
 import { InvertedIndex } from ".";
 import dotenv from "dotenv";
+import { assert } from "./assert";
 dotenv.config();
 
 describe("Inverted Index", () => {
@@ -19,8 +20,13 @@ describe("Inverted Index", () => {
     }
   });
 
-  fit("should tokenize a directory", () => {
+  it("should tokenize a directory", () => {
     const dirName = process.env.SAMPLE_DATA_DIR;
-    console.log(">>>>", dirName);
+    assert(dirName, "SAMPLE_DATA_DIR variable not found in environment");
+    const invertedIndex = new InvertedIndex();
+    invertedIndex.recursivelyIndexDirectory(dirName);
+
+    const files = invertedIndex.search("calendar");
+    expect(Array.from(files!)).toMatchSnapshot();
   });
 });
