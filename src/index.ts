@@ -38,3 +38,29 @@ export function tokenize(text: string): string[] {
     .trim();
   return cleanText.split(/\s+/).filter(Boolean);
 }
+
+type Token = string;
+type FileName = string;
+
+export class InvertedIndex {
+  private index: Map<Token, Set<FileName>> = new Map();
+
+  indexFile(fileName: FileName) {
+    const content = fs.readFileSync(fileName, "utf-8");
+    const tokens = tokenize(content);
+
+    for (const token of tokens) {
+      if (!this.index.has(token)) {
+        this.index.set(token, new Set());
+      }
+
+      this.index.get(token)!.add(fileName);
+    }
+  }
+
+  // TODO: this will search for exact, single tokens.
+  // Need to be able to search for multiple tokens together.
+  search(token: string) {
+    return this.index.get(token) ?? new Set();
+  }
+}
