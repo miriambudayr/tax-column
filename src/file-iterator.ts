@@ -1,6 +1,4 @@
 import { program } from "commander";
-import fs from "fs";
-import path from "path";
 import { listFilesSync } from ".";
 
 /**

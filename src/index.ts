@@ -30,3 +30,11 @@ export function listFilesSync(dir: string, files: string[] = []): string[] {
     return files;
   }
 }
+
+export function tokenize(text: string): string[] {
+  const cleanText = text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .trim();
+  return cleanText.split(/\s+/).filter(Boolean);
+}
