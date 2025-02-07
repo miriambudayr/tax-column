@@ -21,7 +21,6 @@ export function listFilesSync(dir: string, files: string[] = []): string[] {
       listFilesSync(d, files);
     }
 
-    console.log("Done listing files");
     return files;
   } catch (e) {
     console.error(
