@@ -53,3 +53,15 @@ Right now, the performance of what I have so far for indexing + querying using s
 However, before working on optimizing the speed, I want to add one more feature. It doesn't seem useful to only be able to search for individual tokens, so the next thing I need to do is make sure you can search for phrases. This is one of those times where I am going to use AI because I have a vague notion of how to do this, but it will likely take me some time to get the exact query right (I've written enough SQL in my career but not enough to do exact phrase token searches quickly).
 
 My vague notion of how to do this is to add positions to the token_files table for each token, start searching for the first token, and then search that the next position in that file matches the next token in the given phrase.
+
+# Refactor, optimize, or add instant search?
+
+Right now I have a solution that works end-to-end, but it's probably slow. I need to parallelize the text processing/indexing.
+I also have some outdated code and naming I could clean up.
+Finally, I haven't implemented the "instant search" feature yet.
+
+Which should I do first?
+
+I want to refactor before optimizing because optimizing will add code complexity, so it is better to add complexity to cleaner code.
+
+I would rather have code that is reasonable to read and works than confusing code that is missing one feature, so I will do a really fast refactor and then think about how to add the instant search method.
