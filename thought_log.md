@@ -16,9 +16,9 @@ I am going to defer:
 
 First priorities:
 
-- Create basic tokenization
-- Process files and tokenize them
-- Build a basic inverted index in memory for now (using a smaller dataset) to get a sense of how I could translate this to a disk-based index.
+- Create basic tokenization ✅
+- Process files and tokenize them ✅
+- Build a basic inverted index in memory for now (using a smaller dataset) to get a sense of how I could translate this to a disk-based index. ✅
 
 After that is done:
 
