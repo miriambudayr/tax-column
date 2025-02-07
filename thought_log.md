@@ -48,4 +48,8 @@ This isn't supported on mobile, but I can port the solution over to a mobile-com
 
 # Phrase matching
 
-It doesn't seem useful to only be able to search for individual tokens, so the next thing I need to do is make sure you can search for phrases.
+Right now, the performance of what I have so far for indexing + querying using sqlite is unknown (I haven't measured it since I am just using the `test_data` dir) and I imagine it's not great because we are processing one file at a time, one token at a time, and conducting one write at a time. I'm guessing for about 100-200MB of data, it would take at least between 1-5 minutes as it is right now (I decided not to sit there for many minutes and test that theory out since time is limited!).
+
+However, before working on optimizing the speed, I want to add one more feature. It doesn't seem useful to only be able to search for individual tokens, so the next thing I need to do is make sure you can search for phrases. This is one of those times where I am going to use AI because I have a vague notion of how to do this, but it will likely take me some time to get the exact query right (I've written enough SQL in my career but not enough to do exact phrase token searches quickly).
+
+My vague notion of how to do this is to add positions to the token_files table for each token, start searching for the first token, and then search that the next position in that file matches the next token in the given phrase.
