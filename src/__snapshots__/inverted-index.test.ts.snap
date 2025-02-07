@@ -3,5 +3,15 @@
 exports[`Inverted Index should tokenize a directory 1`] = `
 [
   "src/test_data/lorem-ipsum.txt",
+  "src/test_data/lorem-ipsum.txt",
+  "src/test_data/lorem-ipsum.txt",
+  "src/test_data/lorem-ipsum.txt",
+  "src/test_data/lorem-ipsum.txt",
+]
+`;
+
+exports[`Inverted Index should tokenize a directory 2`] = `
+[
+  "src/test_data/lorem-ipsum.txt",
 ]
 `;

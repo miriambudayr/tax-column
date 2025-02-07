@@ -7,6 +7,11 @@ dotenv.config();
 const TEST_DATA_DIR = "src/test_data";
 
 describe("Database Setup", () => {
+  beforeEach(() => {
+    if (fs.existsSync(DB_PATH)) {
+      fs.unlinkSync(DB_PATH);
+    }
+  });
   it("should create the SQLite database file", () => {
     new InvertedIndex();
     const dbPath = process.env.DB_PATH;
@@ -16,7 +21,12 @@ describe("Database Setup", () => {
 });
 
 describe("Inverted Index", () => {
-  it("should index a file", () => {
+  beforeEach(() => {
+    if (fs.existsSync(DB_PATH)) {
+      fs.unlinkSync(DB_PATH);
+    }
+  });
+  it("should index and search a file", () => {
     const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
     const invertedIndex = new InvertedIndex();
     invertedIndex.indexFile(fileName);
@@ -32,7 +42,23 @@ describe("Inverted Index", () => {
     }
   });
 
-  it("should tokenize a directory", () => {
+  it("should search a phrase", () => {
+    const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
+    const invertedIndex = new InvertedIndex();
+    invertedIndex.indexFile(fileName);
+
+    const files = invertedIndex.searchPhrase("euismod ornare ultrices");
+
+    expect(files.length).toBeGreaterThan(0);
+
+    if (files) {
+      for (const file of files) {
+        expect(file).toEqual(fileName);
+      }
+    }
+  });
+
+  fit("should tokenize a directory", () => {
     // TODO: try using actual data sample once this works. The dev feedback loop was way too slow
     // to use the sample data for now.
     // const dirName = process.env.SAMPLE_DATA_DIR;
@@ -41,13 +67,10 @@ describe("Inverted Index", () => {
     const invertedIndex = new InvertedIndex();
     invertedIndex.recursivelyIndexDirectory(dirName);
 
-    const files = invertedIndex.search("porta");
+    let files = invertedIndex.search("porta");
+    expect(Array.from(files!)).toMatchSnapshot();
+
+    files = invertedIndex.searchPhrase("porta magna urna et elit");
     expect(Array.from(files!)).toMatchSnapshot();
   });
-});
-
-afterAll(() => {
-  if (fs.existsSync(DB_PATH)) {
-    fs.unlinkSync(DB_PATH);
-  }
 });

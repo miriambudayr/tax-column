@@ -71,7 +71,8 @@ export class InvertedIndex {
       CREATE TABLE IF NOT EXISTS token_files (
         token_id INTEGER,
         file_name TEXT,
-        PRIMARY KEY (token_id, file_name),
+        position INTEGER,  -- NEW: Stores word position in the file
+        PRIMARY KEY (token_id, file_name, position),
         FOREIGN KEY (token_id) REFERENCES tokens(id) ON DELETE CASCADE
       )
     `);
@@ -100,18 +101,17 @@ export class InvertedIndex {
     // I think I will need to consider text positions later when I want to do
     // multi-token text search? so this will probably become much stricter.
     const insertMappingStatement = this.db.prepare(
-      "INSERT OR IGNORE INTO token_files (token_id, file_name) VALUES (?, ?)"
+      "INSERT OR IGNORE INTO token_files (token_id, file_name, position) VALUES (?, ?, ?)"
     );
 
     this.db.transaction(() => {
-      for (const token of tokens) {
+      tokens.forEach((token, position) => {
         insertTokenStatement.run(token);
-        const row = getTokenIdStatement.get(token) as IndexRow | undefined;
-
+        const row = getTokenIdStatement.get(token) as { id: number };
         if (row) {
-          insertMappingStatement.run(row.id, fileName);
+          insertMappingStatement.run(row.id, fileName, position);
         }
-      }
+      });
     })();
   }
 
@@ -136,6 +136,57 @@ export class InvertedIndex {
       )
       .all(token) as { file_name: string }[];
 
+    return rows.map((row) => row.file_name);
+  }
+
+  searchPhrase(phrase: string): string[] {
+    const tokens = tokenize(phrase);
+    if (tokens.length == 0) {
+      return [];
+    }
+
+    // try to match first token
+    let query = `
+      SELECT tf1.file_name FROM token_files tf1
+      JOIN tokens t1 ON t1.id = tf1.token_id AND t1.token = ?
+    `;
+
+    const params: (string | number)[] = [tokens[0]];
+
+    /**
+     * Search for tokens that are next to each other.
+     * Example: ["fraud investigation money"]
+     * If "fraud" token has a position of 0, then "investigation" should have pos=1,
+     * and "money" should have pos=1
+     * 
+     * The SQL would look like:
+     * 
+          SELECT tf1.file_name FROM token_files tf1
+          JOIN tokens t1 ON t1.id = tf1.token_id AND t1.token = 'fraud'
+
+          JOIN token_files tf2 ON tf1.file_name = tf2.file_name
+          JOIN tokens t2 ON t2.id = tf2.token_id AND t2.token = 'investigation'
+          AND tf2.position = tf1.position + 1
+
+          ... etc
+
+     */
+    for (let i = 1; i < tokens.length; i++) {
+      query += `
+              JOIN token_files tf${i + 1} ON tf${i}.file_name = tf${
+        i + 1
+      }.file_name
+              JOIN tokens t${i + 1} ON t${i + 1}.id = tf${
+        i + 1
+      }.token_id AND t${i + 1}.token = ?
+              AND tf${i + 1}.position = tf${i}.position + 1
+            `;
+      params.push(tokens[i]);
+    }
+
+    const rows = this.db.prepare(query).all(...params) as {
+      file_name: string;
+    }[];
     return rows.map((row) => row.file_name);
   }
 }
