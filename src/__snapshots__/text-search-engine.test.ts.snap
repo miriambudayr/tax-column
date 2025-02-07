@@ -1,32 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Inverted Index should have case-insensitive search 1`] = `
+exports[`Text Search Engine File Indexing and Search should recursively tokenize a directory 1`] = `
 [
   "src/test_data/calendar/1.",
   "src/test_data/calendar/1.",
 ]
 `;
 
-exports[`Inverted Index should have case-insensitive search 2`] = `
+exports[`Text Search Engine File Indexing and Search should recursively tokenize a directory 2`] = `
 [
   "src/test_data/calendar/1.",
 ]
 `;
 
-exports[`Inverted Index should recursively tokenize a directory 1`] = `
-[
-  "src/test_data/calendar/1.",
-  "src/test_data/calendar/1.",
-]
-`;
-
-exports[`Inverted Index should recursively tokenize a directory 2`] = `
-[
-  "src/test_data/calendar/1.",
-]
-`;
-
-exports[`Inverted Index should tokenize a directory 1`] = `
+exports[`Text Search Engine File Indexing and Search should tokenize a directory 1`] = `
 [
   "src/test_data/lorem-ipsum-2.txt",
   "src/test_data/lorem-ipsum.txt",
@@ -37,8 +24,21 @@ exports[`Inverted Index should tokenize a directory 1`] = `
 ]
 `;
 
-exports[`Inverted Index should tokenize a directory 2`] = `
+exports[`Text Search Engine File Indexing and Search should tokenize a directory 2`] = `
 [
   "src/test_data/lorem-ipsum.txt",
+]
+`;
+
+exports[`Text Search Engine File Indexing and Search should use case-insensitive search 1`] = `
+[
+  "src/test_data/calendar/1.",
+  "src/test_data/calendar/1.",
+]
+`;
+
+exports[`Text Search Engine File Indexing and Search should use case-insensitive search 2`] = `
+[
+  "src/test_data/calendar/1.",
 ]
 `;

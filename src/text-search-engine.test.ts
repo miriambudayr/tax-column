@@ -22,8 +22,7 @@ describe("Text Search Engine", () => {
 
     it("should create the SQLite database file", () => {
       new TextSearchEngine();
-      const dbPath = process.env.DB_PATH;
-      assert(dbPath, "DB_PATH environment variable not found");
+      const dbPath = DB_PATH;
       expect(fs.existsSync(dbPath)).toBe(true);
     });
   });
@@ -43,10 +42,10 @@ describe("Text Search Engine", () => {
 
     it("should index and search a file", () => {
       const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
-      const invertedIndex = new TextSearchEngine();
-      invertedIndex.indexFile(fileName);
+      const searchEngine = new TextSearchEngine();
+      searchEngine.indexFile(fileName);
 
-      const files = invertedIndex.search("metus");
+      const files = searchEngine.search("metus");
 
       expect(files.length).toBeGreaterThan(0);
 
@@ -59,10 +58,10 @@ describe("Text Search Engine", () => {
 
     it("should search a phrase", () => {
       const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
-      const invertedIndex = new TextSearchEngine();
-      invertedIndex.indexFile(fileName);
+      const searchEngine = new TextSearchEngine();
+      searchEngine.indexFile(fileName);
 
-      const files = invertedIndex.searchPhrase("euismod ornare ultrices");
+      const files = searchEngine.searchPhrase("euismod ornare ultrices");
 
       expect(files.length).toBeGreaterThan(0);
 
@@ -80,37 +79,37 @@ describe("Text Search Engine", () => {
       // assert(dirName, "SAMPLE_DATA_DIR environment variable not found");
 
       const dirName = TEST_DATA_DIR;
-      const invertedIndex = new TextSearchEngine();
-      invertedIndex.recursivelyIndexDirectory(dirName);
+      const searchEngine = new TextSearchEngine();
+      searchEngine.recursivelyIndexDirectory(dirName);
 
-      let files = invertedIndex.search("porta");
+      let files = searchEngine.search("porta");
       expect(Array.from(files!)).toMatchSnapshot();
 
-      files = invertedIndex.searchPhrase("porta magna urna et elit");
+      files = searchEngine.searchPhrase("porta magna urna et elit");
       expect(Array.from(files!)).toMatchSnapshot();
     });
 
     it("should recursively tokenize a directory", () => {
       const dirName = TEST_DATA_DIR;
-      const invertedIndex = new TextSearchEngine();
-      invertedIndex.recursivelyIndexDirectory(dirName);
+      const searchEngine = new TextSearchEngine();
+      searchEngine.recursivelyIndexDirectory(dirName);
 
-      let files = invertedIndex.search("simmons");
+      let files = searchEngine.search("simmons");
       expect(Array.from(files!)).toMatchSnapshot();
 
-      files = invertedIndex.searchPhrase("dinner hosted by matt simmons");
+      files = searchEngine.searchPhrase("dinner hosted by matt simmons");
       expect(Array.from(files!)).toMatchSnapshot();
     });
 
     it("should use case-insensitive search", () => {
       const dirName = TEST_DATA_DIR;
-      const invertedIndex = new TextSearchEngine();
-      invertedIndex.recursivelyIndexDirectory(dirName);
+      const searchEngine = new TextSearchEngine();
+      searchEngine.recursivelyIndexDirectory(dirName);
 
-      let files = invertedIndex.search("Simmons");
+      let files = searchEngine.search("Simmons");
       expect(Array.from(files!)).toMatchSnapshot();
 
-      files = invertedIndex.searchPhrase("Dinner hosted by Matt Simmons");
+      files = searchEngine.searchPhrase("Dinner hosted by Matt Simmons");
       expect(Array.from(files!)).toMatchSnapshot();
     });
   });
