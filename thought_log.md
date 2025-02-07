@@ -1,6 +1,6 @@
 # Thought Log
 
-I almost always write thought logs when I develop.
+I almost always write thought logs when I develop. The log is written chronologically (the newest entries are at the bottom).
 
 # Tokenizers
 
