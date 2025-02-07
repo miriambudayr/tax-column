@@ -42,13 +42,19 @@ export function tokenize(text: string): string[] {
 
 type Token = string;
 type FileName = string;
+interface IndexRow {
+  files: string;
+  id: number;
+}
+
+export const DB_PATH = "src/invertedIndex.db";
 
 export class InvertedIndex {
   private index: Map<Token, Set<FileName>> = new Map();
   private db: Database;
 
-  constructor(dbPath: string = "src/invertedIndex.db") {
-    this.db = new DatabaseConstructor(dbPath);
+  constructor() {
+    this.db = new DatabaseConstructor(DB_PATH);
     this.setupSchema();
   }
 
@@ -71,17 +77,42 @@ export class InvertedIndex {
     `);
   }
 
-  indexFile(fileName: FileName) {
+  tokenizeFile(fileName: FileName): string[] {
     const content = fs.readFileSync(fileName, "utf-8");
-    const tokens = tokenize(content);
+    return tokenize(content);
+  }
 
-    for (const token of tokens) {
-      if (!this.index.has(token)) {
-        this.index.set(token, new Set());
+  indexFile(fileName: FileName) {
+    const tokens = this.tokenizeFile(fileName);
+
+    // if token already exists, ignore it.
+    // we expect there to be duplicate tokens.
+    const insertTokenStatement = this.db.prepare(
+      "INSERT OR IGNORE INTO tokens (token) VALUES (?)"
+    );
+
+    const getTokenIdStatement = this.db.prepare(
+      "SELECT id FROM tokens WHERE token = ?"
+    );
+
+    // using INSERT OR IGNORE INTO here because one file might have multiple copies
+    // of the same token.
+    // I think I will need to consider text positions later when I want to do
+    // multi-token text search? so this will probably become much stricter.
+    const insertMappingStatement = this.db.prepare(
+      "INSERT OR IGNORE INTO token_files (token_id, file_name) VALUES (?, ?)"
+    );
+
+    this.db.transaction(() => {
+      for (const token of tokens) {
+        insertTokenStatement.run(token);
+        const row = getTokenIdStatement.get(token) as IndexRow | undefined;
+
+        if (row) {
+          insertMappingStatement.run(row.id, fileName);
+        }
       }
-
-      this.index.get(token)!.add(fileName);
-    }
+    })();
   }
 
   recursivelyIndexDirectory(dirName: string) {
@@ -94,7 +125,17 @@ export class InvertedIndex {
 
   // TODO: this will search for exact, single tokens.
   // Need to be able to search for multiple tokens together.
-  search(token: string) {
-    return this.index.get(token) ?? new Set();
+  search(token: string): string[] {
+    const rows = this.db
+      .prepare(
+        `
+      SELECT file_name FROM token_files
+      JOIN tokens ON tokens.id = token_files.token_id
+      WHERE tokens.token = ?
+    `
+      )
+      .all(token) as { file_name: string }[];
+
+    return rows.map((row) => row.file_name);
   }
 }
