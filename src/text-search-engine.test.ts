@@ -13,6 +13,12 @@ describe("Database Setup", () => {
     }
   });
 
+  afterEach(() => {
+    if (fs.existsSync(DB_PATH)) {
+      fs.unlinkSync(DB_PATH);
+    }
+  });
+
   it("should create the SQLite database file", () => {
     new TextSearchEngine();
     const dbPath = process.env.DB_PATH;
