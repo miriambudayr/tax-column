@@ -12,6 +12,7 @@ describe("Database Setup", () => {
       fs.unlinkSync(DB_PATH);
     }
   });
+
   it("should create the SQLite database file", () => {
     new TextSearchEngine();
     const dbPath = process.env.DB_PATH;
