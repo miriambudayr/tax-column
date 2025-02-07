@@ -1,4 +1,6 @@
 import { InvertedIndex } from ".";
+import dotenv from "dotenv";
+dotenv.config();
 
 describe("Inverted Index", () => {
   it("should index a file", () => {
@@ -15,5 +17,10 @@ describe("Inverted Index", () => {
         expect(file).toEqual(fileName);
       }
     }
+  });
+
+  fit("should tokenize a directory", () => {
+    const dirName = process.env.SAMPLE_DATA_DIR;
+    console.log(">>>>", dirName);
   });
 });
