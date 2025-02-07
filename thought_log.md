@@ -41,3 +41,7 @@ I finished the basic inverted index. I know ElasticSearch uses inverted indices 
   - Requires a backend server, needs internet connection which is a constraint in the specs
 
 I am going to use sqlite because it ticks more of the important boxes.
+
+# better-sqlite3
+
+This isn't supported on mobile, but I can port the solution over to a mobile-compatible sqlite engine. I want to focus on correctness first.
