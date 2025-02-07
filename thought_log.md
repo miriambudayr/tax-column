@@ -45,3 +45,7 @@ I am going to use sqlite because it ticks more of the important boxes.
 # better-sqlite3
 
 This isn't supported on mobile, but I can port the solution over to a mobile-compatible sqlite engine. I want to focus on correctness first.
+
+# Phrase matching
+
+It doesn't seem useful to only be able to search for individual tokens, so the next thing I need to do is make sure you can search for phrases.
