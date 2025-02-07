@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import DatabaseConstructor, { Database } from "better-sqlite3";
 
 export function listFilesSync(dir: string, files: string[] = []): string[] {
   try {
@@ -31,6 +32,7 @@ export function listFilesSync(dir: string, files: string[] = []): string[] {
 }
 
 export function tokenize(text: string): string[] {
+  // TODO: not sure if this is enough cleaning after looking at the files more closely.
   const cleanText = text
     .toLowerCase()
     .replace(/[^\w\s]/g, "")
@@ -43,6 +45,29 @@ type FileName = string;
 
 export class InvertedIndex {
   private index: Map<Token, Set<FileName>> = new Map();
+  private db: Database;
+
+  constructor(dbPath: string = "src/invertedIndex.db") {
+    this.db = new DatabaseConstructor(dbPath);
+    this.setupSchema();
+  }
+
+  setupSchema() {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        token TEXT UNIQUE
+      )  
+    `);
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS token_files (
+        token_id INTEGER,
+        file_name TEXT,
+        PRIMARY KEY (token_id, file_name),
+        FOREIGN KEY (token_id) REFERENCES tokens(id) ON DELETE CASCADE
+      )
+    `);
+  }
 
   indexFile(fileName: FileName) {
     const content = fs.readFileSync(fileName, "utf-8");
