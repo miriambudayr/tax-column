@@ -134,13 +134,13 @@ export class InvertedIndex {
       WHERE tokens.token = ?
     `
       )
-      .all(token) as { file_name: string }[];
+      .all(token.toLowerCase()) as { file_name: string }[];
 
     return rows.map((row) => row.file_name);
   }
 
   searchPhrase(phrase: string): string[] {
-    const tokens = tokenize(phrase);
+    const tokens = tokenize(phrase.toLowerCase());
     if (tokens.length == 0) {
       return [];
     }

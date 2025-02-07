@@ -62,8 +62,9 @@ describe("Inverted Index", () => {
     // TODO: try using actual data sample once this works. The dev feedback loop was way too slow
     // to use the sample data for now.
     // const dirName = process.env.SAMPLE_DATA_DIR;
+    // assert(dirName, "SAMPLE_DATA_DIR environment variable not found");
+
     const dirName = TEST_DATA_DIR;
-    assert(dirName, "SAMPLE_DATA_DIR environment variable not found");
     const invertedIndex = new InvertedIndex();
     invertedIndex.recursivelyIndexDirectory(dirName);
 
@@ -71,6 +72,30 @@ describe("Inverted Index", () => {
     expect(Array.from(files!)).toMatchSnapshot();
 
     files = invertedIndex.searchPhrase("porta magna urna et elit");
+    expect(Array.from(files!)).toMatchSnapshot();
+  });
+
+  it("should recursively tokenize a directory", () => {
+    const dirName = TEST_DATA_DIR;
+    const invertedIndex = new InvertedIndex();
+    invertedIndex.recursivelyIndexDirectory(dirName);
+
+    let files = invertedIndex.search("simmons");
+    expect(Array.from(files!)).toMatchSnapshot();
+
+    files = invertedIndex.searchPhrase("dinner hosted by matt simmons");
+    expect(Array.from(files!)).toMatchSnapshot();
+  });
+
+  it("should use case-insensitive search", () => {
+    const dirName = TEST_DATA_DIR;
+    const invertedIndex = new InvertedIndex();
+    invertedIndex.recursivelyIndexDirectory(dirName);
+
+    let files = invertedIndex.search("Simmons");
+    expect(Array.from(files!)).toMatchSnapshot();
+
+    files = invertedIndex.searchPhrase("Dinner hosted by Matt Simmons");
     expect(Array.from(files!)).toMatchSnapshot();
   });
 });
