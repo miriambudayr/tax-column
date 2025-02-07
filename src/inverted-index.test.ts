@@ -58,7 +58,7 @@ describe("Inverted Index", () => {
     }
   });
 
-  fit("should tokenize a directory", () => {
+  it("should tokenize a directory", () => {
     // TODO: try using actual data sample once this works. The dev feedback loop was way too slow
     // to use the sample data for now.
     // const dirName = process.env.SAMPLE_DATA_DIR;
