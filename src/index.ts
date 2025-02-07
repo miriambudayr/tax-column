@@ -181,4 +181,30 @@ export class TextSearchEngine {
     }[];
     return rows.map((row) => row.file_name);
   }
+
+  // TODO: do the same thing but with phrases instead of individual tokens.
+  searchPrefix(prefix: string): { file: string; matchedWord: string }[] {
+    const rows = this.db
+      .prepare(
+        `
+        SELECT DISTINCT file_name, tokens.token as matchedWord FROM token_files
+        JOIN tokens ON tokens.id = token_files.token_id
+        WHERE tokens.token LIKE ?
+        LIMIT 50  -- Prevent excessive results
+      `
+      )
+      .all(`${prefix.toLowerCase()}%`) as {
+      file_name: string;
+      matchedWord: string;
+      position: number;
+    }[];
+
+    // Would be nice to also include position here because as it is now,
+    // if there are multiple prefix matches in one file, it will just return that
+    // file name multiple times.
+    return rows.map((row) => ({
+      file: row.file_name,
+      matchedWord: row.matchedWord,
+    }));
+  }
 }

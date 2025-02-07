@@ -42,3 +42,23 @@ exports[`Text Search Engine File Indexing and Search should use case-insensitive
   "src/test_data/calendar/1.",
 ]
 `;
+
+exports[`Text Search Engine Prefix Search (Search-as-You-Type) should return files and words containing a prefix 1`] = `
+[
+  {
+    "file": "src/test_data/calendar/1.",
+    "matchedWord": "president",
+    "position": undefined,
+  },
+  {
+    "file": "src/test_data/calendar/2.",
+    "matchedWord": "president",
+    "position": undefined,
+  },
+  {
+    "file": "src/test_data/calendar/2.",
+    "matchedWord": "presentation",
+    "position": undefined,
+  },
+]
+`;

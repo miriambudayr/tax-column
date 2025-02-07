@@ -113,4 +113,29 @@ describe("Text Search Engine", () => {
       expect(Array.from(files!)).toMatchSnapshot();
     });
   });
+
+  describe("Prefix Search (Search-as-You-Type)", () => {
+    beforeEach(() => {
+      if (fs.existsSync(DB_PATH)) {
+        fs.unlinkSync(DB_PATH);
+      }
+    });
+
+    afterEach(() => {
+      if (fs.existsSync(DB_PATH)) {
+        fs.unlinkSync(DB_PATH);
+      }
+    });
+
+    it("should return files and words containing a prefix", () => {
+      const dirName = TEST_DATA_DIR;
+      const searchEngine = new TextSearchEngine();
+      searchEngine.recursivelyIndexDirectory(dirName);
+
+      const results = searchEngine.searchPrefix("pres");
+
+      expect(results.length).toBeGreaterThan(0);
+      expect(results).toMatchSnapshot();
+    });
+  });
 });
