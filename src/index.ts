@@ -53,6 +53,8 @@ export class InvertedIndex {
   }
 
   setupSchema() {
+    // query should search for `token` in `tokens` table, get the id
+    // and then find all `token_files` rows that contain the `id`.
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS tokens (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
