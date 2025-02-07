@@ -1,4 +1,4 @@
-import { DB_PATH, InvertedIndex } from ".";
+import { DB_PATH, TextSearchEngine } from ".";
 import dotenv from "dotenv";
 import fs from "fs";
 import { assert } from "./assert";
@@ -13,7 +13,7 @@ describe("Database Setup", () => {
     }
   });
   it("should create the SQLite database file", () => {
-    new InvertedIndex();
+    new TextSearchEngine();
     const dbPath = process.env.DB_PATH;
     assert(dbPath, "DB_PATH environment variable not found");
     expect(fs.existsSync(dbPath)).toBe(true);
@@ -28,7 +28,7 @@ describe("Inverted Index", () => {
   });
   it("should index and search a file", () => {
     const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
-    const invertedIndex = new InvertedIndex();
+    const invertedIndex = new TextSearchEngine();
     invertedIndex.indexFile(fileName);
 
     const files = invertedIndex.search("metus");
@@ -44,7 +44,7 @@ describe("Inverted Index", () => {
 
   it("should search a phrase", () => {
     const fileName = `${TEST_DATA_DIR}/lorem-ipsum.txt`;
-    const invertedIndex = new InvertedIndex();
+    const invertedIndex = new TextSearchEngine();
     invertedIndex.indexFile(fileName);
 
     const files = invertedIndex.searchPhrase("euismod ornare ultrices");
@@ -65,7 +65,7 @@ describe("Inverted Index", () => {
     // assert(dirName, "SAMPLE_DATA_DIR environment variable not found");
 
     const dirName = TEST_DATA_DIR;
-    const invertedIndex = new InvertedIndex();
+    const invertedIndex = new TextSearchEngine();
     invertedIndex.recursivelyIndexDirectory(dirName);
 
     let files = invertedIndex.search("porta");
@@ -77,7 +77,7 @@ describe("Inverted Index", () => {
 
   it("should recursively tokenize a directory", () => {
     const dirName = TEST_DATA_DIR;
-    const invertedIndex = new InvertedIndex();
+    const invertedIndex = new TextSearchEngine();
     invertedIndex.recursivelyIndexDirectory(dirName);
 
     let files = invertedIndex.search("simmons");
@@ -89,7 +89,7 @@ describe("Inverted Index", () => {
 
   it("should use case-insensitive search", () => {
     const dirName = TEST_DATA_DIR;
-    const invertedIndex = new InvertedIndex();
+    const invertedIndex = new TextSearchEngine();
     invertedIndex.recursivelyIndexDirectory(dirName);
 
     let files = invertedIndex.search("Simmons");

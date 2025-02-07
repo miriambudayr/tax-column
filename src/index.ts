@@ -40,17 +40,15 @@ export function tokenize(text: string): string[] {
   return cleanText.split(/\s+/).filter(Boolean);
 }
 
-type Token = string;
 type FileName = string;
 interface IndexRow {
   files: string;
   id: number;
 }
 
-export const DB_PATH = "src/invertedIndex.db";
+export const DB_PATH = "src/searchIndex.db";
 
-export class InvertedIndex {
-  private index: Map<Token, Set<FileName>> = new Map();
+export class TextSearchEngine {
   private db: Database;
 
   constructor() {
